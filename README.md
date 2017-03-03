@@ -1,4 +1,4 @@
-# Simple web3j Library Demo
+# Ethereum Apps and Java
 
 This repository contains a very simple setup to start developing [Ethereum](https://ethereum.org/) applications with Java. 
 For accessing the Ethereum network from Java the [web3j](https://docs.web3j.io/) library is used.  
