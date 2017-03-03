@@ -1,7 +1,7 @@
 # Simple web3j Library Demo
 
-This repository contains a very simple setup to start developing [https://ethereum.org/](Ethereum) applications with Java. 
-For accessing the Ethereum network from Java the [https://docs.web3j.io/](web3j) library is used.  
+This repository contains a very simple setup to start developing [Ethereum](https://ethereum.org/) applications with Java. 
+For accessing the Ethereum network from Java the [web3j](https://docs.web3j.io/) library is used.  
 
 ## Prerequsites
 
@@ -26,7 +26,7 @@ This is very useful for development and testing of Blockchain applications local
 
 ### TestRPC Client 
 
-The [https://github.com/ethereumjs/testrpc](TestRPC) projects provides probably the fastest Ethereum client for testing and development of Ethereum applications. 
+The [TestRPC](https://github.com/ethereumjs/testrpc) projects provides probably the fastest Ethereum client for testing and development of Ethereum applications. 
 This makes the TestRPC client ideal for development and automated tests. 
 
 Start with building the TestRPC Docker image from this repository's main directory.
@@ -50,11 +50,11 @@ The TestRPC container comes with 10 accounts that have an initial balance of 100
 All accounts are unlocked and can be used for Ether transfers.  
 
 There are a number of cases where the behavior of TestRPC differs from Geth, the official Ethereum client.
-It is therefore recommended to develop and test Ethereum application not only with TestRPC but also with Geth or other official implementations of the [https://github.com/ethereum/go-ethereum/wiki/Ethereum-Specification](Ethereum specification). 
+It is therefore recommended to develop and test Ethereum application not only with TestRPC but also with Geth or other official implementations of the [Ethereum specification](https://github.com/ethereum/go-ethereum/wiki/Ethereum-Specification). 
 
 ### Geth Client
 
-[https://github.com/ethereum/go-ethereum](Geth) is the reference implementation for a full Ethereum node that is implemented in the programming language Go. 
+[Geth](https://github.com/ethereum/go-ethereum) is the reference implementation for a full Ethereum node that is implemented in the programming language Go. 
 The Docker image provided with this repository patches the original Geth sources to minimize the waiting times for mining new blocks. This is useful to reduce waiting times during the development of Ethereum applications.
 
 Start with building the Geth Docker image from this repository's main directory.
@@ -134,4 +134,9 @@ Balance after Tx: 0.123
 
 In case you work with Windows expect the Docker container to use a virtual host under a separate IP address and not to run on ```localhost```. 
 The command  ```docker-machine ls``` lists the running virtual boxes and their associated IP addresses. 
+Running the demo application with a custom ip and a custom port then looks like the following command.
+
+```
+java -jar target/Web3jDemo-1.0-SNAPSHOT.jar <docker-ip> <custom-port>
+```
   
