@@ -87,7 +87,7 @@ web3.eth.sendTransaction({from: web3.eth.coinbase, to:web3.eth.accounts[1], valu
 web3.fromWei(web3.eth.getBalance(web3.eth.accounts[1]), "ether")
 ```
 
-To exit the interactive node console type twice <CTRL><C>. To exit the bash shell in the running docker instance type ```exit```.
+To exit the interactive node console type twice `<CTRL><C>`. To exit the bash shell in the running docker instance type `exit`.
 
 **IMPORTANT**: There are a number of cases where the behavior of TestRPC differs from Geth, the official Ethereum client.
 It is therefore recommended to develop and test Ethereum application not only with TestRPC but also with Geth or other official implementations of the [Ethereum specification](https://github.com/ethereum/go-ethereum/wiki/Ethereum-Specification). 
