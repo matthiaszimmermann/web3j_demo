@@ -72,13 +72,22 @@ Finally, in the interactive node mode use the web3 library to talk to the testrp
 
 ```
 >
-var Web3 = require('web3');
-var web3 = new Web3();
-web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'));
+// create web3 object and attach to testrpc
+var Web3 = require('web3')
+var web3 = new Web3()
+web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'))
+// show coinbase address and its balance in ether
 web3.eth.coinbase
-web3.eth.getBalance(web3.eth.coinbase);
-
+web3.fromWei(web3.eth.getBalance(web3.eth.coinbase), "ether")
+// show initial testrpc address list and the balance of the second address
+web3.eth.accounts
+web3.fromWei(web3.eth.getBalance(web3.eth.accounts[1]), "ether")
+// transfer 0.5 ethers from the coinbase to the sencond address
+web3.eth.sendTransaction({from: web3.eth.coinbase, to:web3.eth.accounts[1], value: web3.toWei(0.5, "ether")})
+web3.fromWei(web3.eth.getBalance(web3.eth.accounts[1]), "ether")
 ```
+
+To exit the interactive node console type twice <CTRL><C>. To exit the bash shell in the running docker instance type ```exit```.
 
 **IMPORTANT**: There are a number of cases where the behavior of TestRPC differs from Geth, the official Ethereum client.
 It is therefore recommended to develop and test Ethereum application not only with TestRPC but also with Geth or other official implementations of the [Ethereum specification](https://github.com/ethereum/go-ethereum/wiki/Ethereum-Specification). 
