@@ -117,7 +117,7 @@ public class TransferDemo {
 		// step 4: wait for the confirmation of the network
 		TransactionReceipt receipt = waitForReceipt(txHash);
 		BigInteger gasUsed = receipt.getCumulativeGasUsed();
-		System.out.println("Tx cost " + gasUsed + " Gas (" + 
+		System.out.println("Tx cost: " + gasUsed + " Gas (" + 
 				weiToEther(gasUsed.multiply(GAS_PRICE)) +" Ether)\n");
 
 		System.out.println("Balance after Tx: " + getBalance(toAddress));

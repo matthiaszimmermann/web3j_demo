@@ -61,7 +61,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.matthiaszimmermann.web3j.demo.HelloWorld</mainClass>
+									<mainClass>org.matthiaszimmermann.web3j.demo.TransferDemo</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
