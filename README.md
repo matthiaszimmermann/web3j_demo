@@ -166,10 +166,17 @@ The above command runs class ```HelloWorld``` with default parameters (Port=8545
 Connecting to the Geth container the expected output of the command looks like this.
 
 ```
-Connected to Geth/v1.5.9-stable-a07539fb/linux/go1.7.5
-Account 0xbb96b808f69acff10dbafa1d550911a62389b418
-Balance before Tx: 0
-Balance after Tx: 0.123
+Connected to EthereumJS TestRPC/v3.0.5/ethereum-js
+
+Account (to address) 0x6c4adeb473cde981b08825d7edc0f88d356d8b32
+Balance before Tx: 100
+
+Transfer 0.123 Ether to account
+Nonce for sending address (coinbase): 0
+Tx hash: 0x406013305c7b2defa1ae02eae3e47e5748644af1518ef3d6337580989398ad4a
+Tx cost: 21000 Gas (0.00042 Ether)
+
+Balance after Tx: 100.123
 ```
 
 In case you work with Windows expect the Docker container to use a virtual host under a separate IP address and not to run on ```localhost```. 
