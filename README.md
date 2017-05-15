@@ -23,10 +23,9 @@ For both clients a Dockerfile is provided to build corresponding images that can
 
 This is very useful for development and testing of Blockchain applications locally and without any external dependencies like a working Wifi connection.
 
-
 ### TestRPC Client 
 
-The [TestRPC](https://github.com/ethereumjs/testrpc) projects provides probably the fastest Ethereum client for testing and development of Ethereum applications. 
+The [TestRPC](https://github.com/ethereumjs/testrpc) projects provides the fastest Ethereum client for testing and development of Ethereum applications. 
 This makes the TestRPC client ideal for development and automated tests. 
 
 Start with building the TestRPC Docker image from this repository's main directory.
@@ -47,9 +46,41 @@ docker run -p 8545:8545 -d ethereum_testrpc
 ```
 
 The TestRPC container comes with 10 accounts that have an initial balance of 100 Ethers.  
-All accounts are unlocked and can be used for Ether transfers.  
+All accounts are unlocked and can be used for Ether transfers.
 
-There are a number of cases where the behavior of TestRPC differs from Geth, the official Ethereum client.
+You can check this from within the running testrpc container.
+1. Attach to the docker container
+2. Start node
+3. Use the web3 JavaScript library to talk to the testrpc client
+
+First, attach to the running testrpc container.
+
+```
+~/Web3jDemo
+docker exec -it <container-id> bash
+```
+
+Inside the docker container cd to the testrpc directory and start node
+
+```
+root@<container-id>:/# 
+cd /usr/lib/node_modules/ethereumjs-testrpc
+node
+```
+
+Finally, in the interactive node mode use the web3 library to talk to the testrpc client
+
+```
+>
+var Web3 = require('web3');
+var web3 = new Web3();
+web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'));
+web3.eth.coinbase
+web3.eth.getBalance(web3.eth.coinbase);
+
+```
+
+**IMPORTANT**: There are a number of cases where the behavior of TestRPC differs from Geth, the official Ethereum client.
 It is therefore recommended to develop and test Ethereum application not only with TestRPC but also with Geth or other official implementations of the [Ethereum specification](https://github.com/ethereum/go-ethereum/wiki/Ethereum-Specification). 
 
 ### Geth Client
