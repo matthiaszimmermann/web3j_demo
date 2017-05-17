@@ -68,13 +68,13 @@ public class EthereumBaseTest {
 		return Web3jUtils.getBalanceEther(web3j, address); 
 	}
 
-	String transferEther(String from, String to, BigInteger amount) throws Exception {
+	String transferEther(String from, String to, BigInteger amountWei) throws Exception {
 		BigInteger nonce = getNonce(from);
 		Transaction transaction = Transaction.createEtherTransaction(
-				from, nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT, to, amount);
+				from, nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT, to, amountWei);
 
 		EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).sendAsync().get();
-		System.out.println("transferEther. nonce: " + nonce + " amount: " + amount + " to: " + to);
+		System.out.println("transferEther. nonce: " + nonce + " amount: " + amountWei + " to: " + to);
 
 		return ethSendTransaction.getTransactionHash();
 	}

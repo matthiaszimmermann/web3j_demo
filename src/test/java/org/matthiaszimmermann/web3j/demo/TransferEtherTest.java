@@ -101,9 +101,6 @@ public class TransferEtherTest extends EthereumBaseTest {
 	@Test
 	public void testCreateSignAndSendTransaction() throws Exception {
 
-		// http://ethereum.stackexchange.com/questions/1832/cant-send-transaction-exceeds-block-gas-limit-or-intrinsic-gas-too-low
-		BigInteger txGasLimit = BigInteger.valueOf(21_000);
-
 		String from = Alice.ADDRESS;
 		Credentials credentials = Alice.CREDENTIALS;
 		BigInteger nonce = getNonce(from);
@@ -115,7 +112,7 @@ public class TransferEtherTest extends EthereumBaseTest {
 				.createEtherTransaction(
 						nonce, 
 						Web3jConstants.GAS_PRICE, 
-						txGasLimit, 
+						Web3jConstants.GAS_LIMIT_ETHER_TX, 
 						to, 
 						amountWei);
 
@@ -123,7 +120,7 @@ public class TransferEtherTest extends EthereumBaseTest {
 		byte[] txSignedBytes = TransactionEncoder.signMessage(txRaw, credentials);
 		String txSigned = Numeric.toHexString(txSignedBytes);
 
-		BigInteger txFees = txGasLimit.multiply(Web3jConstants.GAS_PRICE);
+		BigInteger txFees = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(Web3jConstants.GAS_PRICE);
 
 		// make sure sender has sufficient funds
 		ensureFundsForTransaction(Alice.ADDRESS, amountWei.add(txFees));
