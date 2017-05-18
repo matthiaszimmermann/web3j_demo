@@ -1,4 +1,4 @@
-package org.matthiaszimmermann.web3j.demo;
+package org.matthiaszimmermann.web3j.demo.dummy;
 
 import java.security.MessageDigest;
 import java.util.Random;

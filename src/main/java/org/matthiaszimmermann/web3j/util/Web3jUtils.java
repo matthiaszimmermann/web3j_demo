@@ -1,5 +1,9 @@
-package org.matthiaszimmermann.web3j.demo;
+package org.matthiaszimmermann.web3j.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
@@ -7,11 +11,13 @@ import java.util.concurrent.ExecutionException;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthCoinbase;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
@@ -86,6 +92,34 @@ public class Web3jUtils {
 		return Convert.fromWei(wei.toString(), Convert.Unit.ETHER);
 	}
 	
+	/**
+	 * Transfers the specified amount of Wei from the coinbase to the specified account.
+	 * The method waits for the transfer to complete using method {@link waitForReceipt}.  
+	 */
+	public static TransactionReceipt transferFromCoinbaseAndWait(Web3j web3j, String to, BigInteger amountWei) 
+			throws Exception 
+	{
+		String coinbase = getCoinbase(web3j).getResult();
+		BigInteger nonce = getNonce(web3j, coinbase);
+		// this is a contract method call -> gas limit higher than simple fund transfer
+		BigInteger gasLimit = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(BigInteger.valueOf(2)); 
+		Transaction transaction = Transaction.createEtherTransaction(
+				coinbase, 
+				nonce, 
+				Web3jConstants.GAS_PRICE, 
+				gasLimit, 
+				to, 
+				amountWei);
+
+		EthSendTransaction ethSendTransaction = web3j
+				.ethSendTransaction(transaction)
+				.sendAsync()
+				.get();
+
+		String txHash = ethSendTransaction.getTransactionHash();
+		
+		return waitForReceipt(web3j, txHash);
+	}
 
 	/**
 	 * Waits for the receipt for the transaction specified by the provided tx hash.
@@ -128,4 +162,39 @@ public class Web3jUtils {
 		return receipt.getTransactionReceipt();
 	}
 
+	/**
+	 * Reads the specified solidity file and returns it as a single line string.
+	 * Includes some preprocessing: removing '//' comments and \s+ are replaced by ' ' globally. 
+	 */
+	public static String readSolidityFile(String fileName) {
+		try {
+			File file = new File(fileName);
+			FileInputStream fis = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(fis);
+			BufferedReader br = new BufferedReader(isr);
+			StringBuffer text = new StringBuffer();
+
+			br.lines().forEach(line -> {
+				if(text.length() > 0) {
+					text.append(" ");
+				}
+
+				// treat comments
+				if(line.contains("//")) {
+					line = line.substring(0, line.indexOf("//"));
+				}
+
+				text.append(line);
+			});
+			
+			br.close();
+
+			String sourceCode = text.toString();
+			return sourceCode.replaceAll("\\s+", " ");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}	
 }

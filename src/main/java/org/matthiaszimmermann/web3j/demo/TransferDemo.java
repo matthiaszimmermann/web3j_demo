@@ -2,64 +2,51 @@ package org.matthiaszimmermann.web3j.demo;
 
 import java.math.BigInteger;
 
-import org.web3j.protocol.Web3j;
+import org.matthiaszimmermann.web3j.util.Web3jConstants;
+import org.matthiaszimmermann.web3j.util.Web3jUtils;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthCoinbase;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthMining;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.core.methods.response.Web3ClientVersion;
-import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
 /**
  * Sample application to demonstrate Ether transfer with the web3j library. 
  */
-public class TransferDemo {
-	
-	static Web3j web3j = null;
+public class TransferDemo extends AbstractDemo {
 
 	public static void main(String [] args) throws Exception  {
-		String ip = Web3jConstants.CLIENT_IP;
-		String port = Web3jConstants.CLIENT_PORT;
-
-		if(args.length >= 1) { ip = args[0]; }
-		if(args.length >= 2) { port = args[1]; }
-
-		TransferDemo demo = new TransferDemo(ip, port);
-		demo.run();
+		new TransferDemo(args).run();
 	}
 
-	public TransferDemo(String ip, String port) {
-		String url = String.format("http://%s:%s", ip, port);
-		web3j = Web3j.build(new HttpService(url));
+	public TransferDemo(String [] args) {
+		super(args);
 	}
 
 	/**
 	 * Transfers 0.123 Ethers from the coinbase account to the client's second account.
 	 */
-	public void run()
-			throws Exception
-	{
-		// show Ethereum client details
-		Web3ClientVersion client = web3j
-				.web3ClientVersion()
-				.sendAsync()
-				.get();
+	@Override
+	public void run() throws Exception {
+		super.run();
 		
-		System.out.println("Connected to " + client.getWeb3ClientVersion() + "\n");
-
-		// get addresses and amount to transfer
+		// get basic info 
+		EthMining mining = web3j.ethMining().sendAsync().get();
 		EthCoinbase coinbase = web3j.ethCoinbase().sendAsync().get();
 		EthAccounts accounts = web3j.ethAccounts().sendAsync().get();
 
+		System.out.println("Client is mining: " + mining.getResult());
+		System.out.println("Coinbase address: " + coinbase.getAddress());
+		System.out.println("Coinbase balance: " + Web3jUtils.getBalanceEther(web3j, coinbase.getAddress()) + "\n");
+		
+		// get addresses and amount to transfer
 		String fromAddress = coinbase.getAddress();
 		String toAddress = accounts.getResult().get(1);
-		BigInteger amountWei = Convert
-				.toWei("0.123", Convert.Unit.ETHER)
-				.toBigInteger();
+		BigInteger amountWei = Convert.toWei("0.123", Convert.Unit.ETHER).toBigInteger();
 
 		// do the transfer
 		demoTransfer(fromAddress, toAddress, amountWei);
@@ -77,7 +64,7 @@ public class TransferDemo {
 	void demoTransfer(String fromAddress, String toAddress, BigInteger amountWei)
 			throws Exception
 	{
-		System.out.println("Account (to address) " + toAddress + "\n" + 
+		System.out.println("Accounts[1] (to address) " + toAddress + "\n" + 
 				"Balance before Tx: " + Web3jUtils.getBalanceEther(web3j, toAddress) + "\n");
 
 		System.out.println("Transfer " + Web3jUtils.weiToEther(amountWei) + " Ether to account");
@@ -97,7 +84,7 @@ public class TransferDemo {
 						fromAddress, 
 						nonce, 
 						Web3jConstants.GAS_PRICE, 
-						Web3jConstants.GAS_LIMIT, 
+						Web3jConstants.GAS_LIMIT_ETHER_TX, 
 						toAddress, 
 						amountWei);
 

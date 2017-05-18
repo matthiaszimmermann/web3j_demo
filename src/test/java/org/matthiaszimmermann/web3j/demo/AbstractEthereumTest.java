@@ -12,13 +12,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import org.matthiaszimmermann.web3j.util.Web3jConstants;
+import org.matthiaszimmermann.web3j.util.Web3jUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-public class EthereumBaseTest {
+public class AbstractEthereumTest {
 
 	@Rule
 	public final ExpectedException exception = ExpectedException.none();
@@ -32,7 +34,7 @@ public class EthereumBaseTest {
 	}
 
 	void ensureFundsForTransaction(String address, BigInteger amount) throws Exception {
-		BigInteger txFeeEstimate = Web3jConstants.GAS_PRICE.multiply(Web3jConstants.GAS_LIMIT);
+		BigInteger txFeeEstimate = Web3jConstants.GAS_PRICE.multiply(Web3jConstants.GAS_LIMIT_ETHER_TX);
 		ensureFundsForTransaction(address, amount, txFeeEstimate);
 	}
 	
@@ -51,7 +53,7 @@ public class EthereumBaseTest {
 	}
 	
 	String transferFunds(String address, BigInteger amount) throws Exception {
-		String txHash = transferEther(getCoinbase(), address, amount); 
+		String txHash = transferWei(getCoinbase(), address, amount); 
 		waitForReceipt(txHash);
 		return txHash;
 	}
@@ -64,14 +66,14 @@ public class EthereumBaseTest {
 		return Web3jUtils.getBalanceWei(web3j, address); 
 	}
 
-	BigDecimal getBalanceEther(String address) throws Exception {
-		return Web3jUtils.getBalanceEther(web3j, address); 
+	BigDecimal toEther(BigInteger weiAmount) {
+		return Web3jUtils.weiToEther(weiAmount);
 	}
 
-	String transferEther(String from, String to, BigInteger amountWei) throws Exception {
+	String transferWei(String from, String to, BigInteger amountWei) throws Exception {
 		BigInteger nonce = getNonce(from);
 		Transaction transaction = Transaction.createEtherTransaction(
-				from, nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT, to, amountWei);
+				from, nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT_ETHER_TX, to, amountWei);
 
 		EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).sendAsync().get();
 		System.out.println("transferEther. nonce: " + nonce + " amount: " + amountWei + " to: " + to);
@@ -101,7 +103,7 @@ public class EthereumBaseTest {
 	}
 
 	static String load(String filePath) throws URISyntaxException, IOException {
-		URL url = EthereumBaseTest.class.getClass().getResource(filePath);
+		URL url = AbstractEthereumTest.class.getClass().getResource(filePath);
 		byte[] bytes = Files.readAllBytes(Paths.get(url.toURI()));
 		return new String(bytes);
 	}

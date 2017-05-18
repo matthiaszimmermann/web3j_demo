@@ -1,4 +1,4 @@
-package org.matthiaszimmermann.web3j.demo;
+package org.matthiaszimmermann.web3j.util;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 
 import org.junit.Test;
+import org.matthiaszimmermann.web3j.util.Web3jConstants;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
@@ -17,7 +18,7 @@ import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
-public class CreateAccountTest extends EthereumBaseTest {
+public class CreateAccountTest extends AbstractEthereumTest {
 
 	@Test
 	public void testCreateAccountFromScratch() throws Exception {
@@ -42,13 +43,13 @@ public class CreateAccountTest extends EthereumBaseTest {
 		
 		// test (1) check if it's possible to transfer funds to new address
 		BigInteger amountWei = Convert.toWei("0.131313", Convert.Unit.ETHER).toBigInteger();
-		transferEther(getCoinbase(), address, amountWei);
+		transferWei(getCoinbase(), address, amountWei);
 
 		BigInteger balanceWei = getBalanceWei(address);
 		BigInteger nonce = getNonce(address);
 		
-		assertEquals("Unexected balance for 'to' address", amountWei, balanceWei);
-		assertEquals("Unexected nonce for 'to' address", BigInteger.ZERO, nonce);
+		assertEquals("Unexpected balance for 'to' address", amountWei, balanceWei);
+		assertEquals("Unexpected nonce for 'to' address", BigInteger.ZERO, nonce);
 
 		// test (2) funds can be transferred out of the newly created account
 		BigInteger txFees = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(Web3jConstants.GAS_PRICE);
@@ -76,8 +77,8 @@ public class CreateAccountTest extends EthereumBaseTest {
 
 		assertTrue(error == null);
 		assertFalse(txHash.isEmpty());
-		assertEquals("Unexected nonce for 'to' address", BigInteger.ONE, getNonce(address));
-		assertTrue("Balance for 'from' address too large: " + getBalanceEther(address), getBalanceWei(address).compareTo(txFees) < 0);
+		assertEquals("Unexpected nonce for 'to' address", BigInteger.ONE, getNonce(address));
+		assertTrue("Balance for 'from' address too large: " + getBalanceWei(address), getBalanceWei(address).compareTo(txFees) < 0);
 	}
 
 }

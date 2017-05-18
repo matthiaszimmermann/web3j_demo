@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.junit.Test;
+import org.matthiaszimmermann.web3j.util.Alice;
+import org.matthiaszimmermann.web3j.util.Bob;
+import org.matthiaszimmermann.web3j.util.Web3jConstants;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.core.DefaultBlockParameter;
@@ -26,7 +29,7 @@ import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
-public class TransferEtherTest extends EthereumBaseTest {
+public class TransferEtherTest extends AbstractEthereumTest {
 
 	/**
 	 * Ether transfer tests using methods {@link Transfer#sendFunds()}.
@@ -154,7 +157,7 @@ public class TransferEtherTest extends EthereumBaseTest {
 		String account1 = getAccount(1);
 		BigInteger transferAmount = new BigInteger("31415926");
 
-		String txHash = transferEther(account0, account1, transferAmount);
+		String txHash = transferWei(account0, account1, transferAmount);
 		waitForReceipt(txHash);
 
 		// query for tx via tx hash value
