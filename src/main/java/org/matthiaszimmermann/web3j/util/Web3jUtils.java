@@ -92,6 +92,10 @@ public class Web3jUtils {
 		return Convert.fromWei(wei.toString(), Convert.Unit.ETHER);
 	}
 	
+	public static BigInteger etherToWei(BigDecimal ether) {
+		return Convert.toWei(ether, Convert.Unit.ETHER).toBigInteger();
+	}
+	
 	/**
 	 * Transfers the specified amount of Wei from the coinbase to the specified account.
 	 * The method waits for the transfer to complete using method {@link waitForReceipt}.  

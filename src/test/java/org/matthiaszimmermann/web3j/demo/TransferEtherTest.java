@@ -40,7 +40,7 @@ public class TransferEtherTest extends AbstractEthereumTest {
 		BigDecimal amountEther = BigDecimal.valueOf(0.123);
 		BigInteger amountWei = Convert.toWei(amountEther, Convert.Unit.ETHER).toBigInteger();
 
-		ensureFundsForTransaction(Alice.ADDRESS, amountWei);
+		ensureFunds(Alice.ADDRESS, amountWei);
 
 		BigInteger fromBalanceBefore = getBalanceWei(Alice.ADDRESS);
 		BigInteger toBalanceBefore = getBalanceWei(Bob.ADDRESS);
@@ -60,6 +60,7 @@ public class TransferEtherTest extends AbstractEthereumTest {
 	 * Ether transfer tests using methods {@link Transaction#createEtherTransaction()}, and {@link Web3j#ethSendTransaction()}.
 	 * Sending account needs to be unlocked for this to work.   
 	 */
+	// TODO fixme (ok with testrpc, nok with geth)
 	@Test
 	public void testCreateAndSendTransaction() throws Exception {
 
@@ -77,8 +78,10 @@ public class TransferEtherTest extends AbstractEthereumTest {
 						Web3jConstants.GAS_LIMIT_ETHER_TX, 
 						to, 
 						amountWei);
+		
 
-		// record target account balance before the transfer
+		// record account balances before the transfer
+		BigInteger fromBalanceBefore = getBalanceWei(from);
 		BigInteger toBalanceBefore = getBalanceWei(to);
 
 		// send the transaction to the ethereum client
@@ -88,13 +91,19 @@ public class TransferEtherTest extends AbstractEthereumTest {
 				.get();
 
 		String txHash = ethSendTx.getTransactionHash();
-
 		assertFalse(txHash.isEmpty());
-
+		
 		TransactionReceipt txReceipt = waitForReceipt(txHash);
+		BigInteger txFee = txReceipt.getCumulativeGasUsed().multiply(Web3jConstants.GAS_PRICE);
 
-		assertEquals(txReceipt.getTransactionHash(), txHash);
-		assertEquals("Unexected balance for 'to' address", toBalanceBefore.add(amountWei), getBalanceWei(to));
+		// coinbase might have gotten additional funds from mining
+		BigInteger fromMinimumBalanceExpected = fromBalanceBefore.subtract(amountWei.add(txFee));
+		BigInteger fromBalanceActual = getBalanceWei(from);
+		BigInteger fromBalanceDelta = fromBalanceActual.subtract(fromMinimumBalanceExpected);
+		
+		System.out.println("testCreateAndSendTransaction balance difference=" + fromBalanceDelta + " likely cause block reward (5 Ethers) and tx fees (" + txFee + " Weis)");
+		assertTrue("Unexected balance for 'from' address. difference=" + fromBalanceDelta, fromBalanceDelta.signum() >= 0);
+		assertEquals("Unexected balance for 'to' address", toBalanceBefore.add(amountWei), getBalanceWei(to));		
 	}
 
 	/**
@@ -123,10 +132,10 @@ public class TransferEtherTest extends AbstractEthereumTest {
 		byte[] txSignedBytes = TransactionEncoder.signMessage(txRaw, credentials);
 		String txSigned = Numeric.toHexString(txSignedBytes);
 
-		BigInteger txFees = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(Web3jConstants.GAS_PRICE);
+		BigInteger txFeeEstimate = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(Web3jConstants.GAS_PRICE);
 
 		// make sure sender has sufficient funds
-		ensureFundsForTransaction(Alice.ADDRESS, amountWei.add(txFees));
+		ensureFunds(Alice.ADDRESS, amountWei.add(txFeeEstimate));
 
 		// record balanances before the ether transfer
 		BigInteger fromBalanceBefore = getBalanceWei(Alice.ADDRESS);
@@ -139,12 +148,15 @@ public class TransferEtherTest extends AbstractEthereumTest {
 				.get();
 
 		Error error = ethSendTx.getError();
-		String txHash = ethSendTx.getTransactionHash();
-		System.out.println(ethSendTx.getResult());
-
 		assertTrue(error == null);
+		
+		String txHash = ethSendTx.getTransactionHash();
 		assertFalse(txHash.isEmpty());
-		assertEquals("Unexected balance for 'from' address", fromBalanceBefore.subtract(amountWei.add(txFees)), getBalanceWei(from));
+		
+		TransactionReceipt txReceipt = waitForReceipt(txHash);
+		BigInteger txFee = txReceipt.getCumulativeGasUsed().multiply(Web3jConstants.GAS_PRICE);
+
+		assertEquals("Unexected balance for 'from' address", fromBalanceBefore.subtract(amountWei.add(txFee)), getBalanceWei(from));
 		assertEquals("Unexected balance for 'to' address", toBalanceBefore.add(amountWei), getBalanceWei(to));
 	}
 

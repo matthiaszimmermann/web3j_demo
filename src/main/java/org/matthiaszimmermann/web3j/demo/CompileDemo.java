@@ -155,7 +155,6 @@ public class CompileDemo extends AbstractDemo {
 	/**
 	 * prints content to console
 	 * for abiDefinition and code elements the value is written to the file system.
-	 * TODO extract file writing ops to separate method which are called from checkForResult --> processResult 
 	 */
 	private void printJsonElement(String id, JsonElement e, String ident, String contractName, String path)
 			throws Exception

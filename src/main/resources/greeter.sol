@@ -2,23 +2,27 @@ pragma solidity ^0.4.6;
 
 contract greeter {
 
-    /* Define variable owner of the type address */
+    /* Owner of this contract */
     address owner;
     
-    /* Define public variable that counts the number of deposits calls */
+    /* Counter for deposits calls */
     uint public deposits;
     
-    /* Define variable greeting of the type string */
+    /* Configurable greeting */
     string greeting;
 
-    /* This runs when the contract is executed */
+    /* Constructor runs when contract is deployed */
     function greeter(string _greeting) public {
         owner = msg.sender;
         greeting = _greeting;
         deposits = 0;
     }
 
-    /* Default function to accept payments. Counts # of deposits */
+    /* 
+     * Default function. 
+     * 'payable': Allows to move funds to contract.
+     * Changes state: Costs gas and needs contract transaction.
+     */
     function() payable { 
         deposits += 1;
     }

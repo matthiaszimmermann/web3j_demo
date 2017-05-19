@@ -3,6 +3,7 @@ package org.matthiaszimmermann.web3j.demo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
 
@@ -48,8 +49,8 @@ public class CreateAccountTest extends AbstractEthereumTest {
 		BigInteger balanceWei = getBalanceWei(address);
 		BigInteger nonce = getNonce(address);
 		
-		assertEquals("Unexpected balance for 'to' address", amountWei, balanceWei);
 		assertEquals("Unexpected nonce for 'to' address", BigInteger.ZERO, nonce);
+		assertEquals("Unexpected balance for 'to' address", amountWei, balanceWei);
 
 		// test (2) funds can be transferred out of the newly created account
 		BigInteger txFees = Web3jConstants.GAS_LIMIT_ETHER_TX.multiply(Web3jConstants.GAS_PRICE);
@@ -73,10 +74,11 @@ public class CreateAccountTest extends AbstractEthereumTest {
 
 		Error error = ethSendTx.getError();
 		String txHash = ethSendTx.getTransactionHash();
-		System.out.println(ethSendTx.getResult());
-
-		assertTrue(error == null);
+		assertNull(error);		
 		assertFalse(txHash.isEmpty());
+		
+		waitForReceipt(txHash);
+
 		assertEquals("Unexpected nonce for 'to' address", BigInteger.ONE, getNonce(address));
 		assertTrue("Balance for 'from' address too large: " + getBalanceWei(address), getBalanceWei(address).compareTo(txFees) < 0);
 	}

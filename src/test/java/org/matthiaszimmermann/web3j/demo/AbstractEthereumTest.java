@@ -33,30 +33,36 @@ public class AbstractEthereumTest {
 		 web3j = Web3jUtils.buildHttpClient("192.168.99.100", Web3jConstants.CLIENT_PORT);
 	}
 
-	void ensureFundsForTransaction(String address, BigInteger amount) throws Exception {
-		BigInteger txFeeEstimate = Web3jConstants.GAS_PRICE.multiply(Web3jConstants.GAS_LIMIT_ETHER_TX);
-		ensureFundsForTransaction(address, amount, txFeeEstimate);
-	}
-	
-	void ensureFundsForTransaction(String address, BigInteger amount, BigInteger txFeeEstimate) throws Exception {
+	void ensureFunds(String address, BigInteger amountWei) throws Exception {
 		BigInteger balance = getBalanceWei(address);
-		BigInteger totalAmount = amount.add(txFeeEstimate);
-		BigInteger missingAmount = totalAmount.subtract(balance);
 		
-		if(balance.compareTo(totalAmount) >= 0) {
+		if(balance.compareTo(amountWei) >= 0) {
 			return;
 		}
 		
-		System.out.println(String.format("insufficient funds. transfer %d to %s from coinbase", missingAmount, address));
-		
-		transferFunds(address, missingAmount);
+		BigInteger missingAmount = amountWei.subtract(balance);
+		Web3jUtils.transferFromCoinbaseAndWait(web3j, address, missingAmount);
 	}
+//	
+//	void ensureFundsForTransaction(String address, BigInteger amount, BigInteger txFeeEstimate) throws Exception {
+//		BigInteger balance = getBalanceWei(address);
+//		BigInteger totalAmount = amount.add(txFeeEstimate);
+//		BigInteger missingAmount = totalAmount.subtract(balance);
+//		
+//		if(balance.compareTo(totalAmount) >= 0) {
+//			return;
+//		}
+//		
+//		System.out.println(String.format("insufficient funds. transfer %d to %s from coinbase", missingAmount, address));
+//		
+//		transferFunds(address, missingAmount);
+//	}
 	
-	String transferFunds(String address, BigInteger amount) throws Exception {
-		String txHash = transferWei(getCoinbase(), address, amount); 
-		waitForReceipt(txHash);
-		return txHash;
-	}
+//	String transferFunds(String address, BigInteger amount) throws Exception {
+//		String txHash = transferWei(getCoinbase(), address, amount); 
+//		waitForReceipt(txHash);
+//		return txHash;
+//	}
 
 	TransactionReceipt waitForReceipt(String transactionHash) throws Exception {
 		return Web3jUtils.waitForReceipt(web3j, transactionHash);
@@ -78,7 +84,10 @@ public class AbstractEthereumTest {
 		EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).sendAsync().get();
 		System.out.println("transferEther. nonce: " + nonce + " amount: " + amountWei + " to: " + to);
 
-		return ethSendTransaction.getTransactionHash();
+		String txHash = ethSendTransaction.getTransactionHash(); 
+		waitForReceipt(txHash);
+		
+		return txHash;
 	}
 
 	BigInteger getNonce(String address) throws Exception {

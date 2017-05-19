@@ -28,7 +28,7 @@ public class DeployGreeterTest extends AbstractEthereumTest {
 		// move funds to contract owner (amount in wei) to deploy the contract
 		String contractOwnerAdress = Alice.ADDRESS;
 		BigInteger initialBalance = BigInteger.valueOf(25_000_000_000_000_000L);
-		ensureFundsForTransaction(contractOwnerAdress, initialBalance, BigInteger.valueOf(0));
+		ensureFunds(contractOwnerAdress, initialBalance);
 		
 		BigInteger ownerBalanceBeforeDeploy = getBalanceWei(contractOwnerAdress);
 		System.out.println("Contract owner balance (pre-deploy): " + ownerBalanceBeforeDeploy);
@@ -103,7 +103,7 @@ public class DeployGreeterTest extends AbstractEthereumTest {
 		System.out.println("Contract address balance (after greet): " + getBalanceWei(contractAddress));
 
 		// test (4) loading and using contract from existing address
-		ensureFundsForTransaction(Bob.ADDRESS, initialBalance, BigInteger.valueOf(0));
+		ensureFunds(Bob.ADDRESS, initialBalance);
 		
 		Greeter contractLoaded = Greeter
 				.load(
