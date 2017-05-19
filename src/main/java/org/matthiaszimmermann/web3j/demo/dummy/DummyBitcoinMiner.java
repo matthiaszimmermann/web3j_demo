@@ -3,7 +3,14 @@ package org.matthiaszimmermann.web3j.demo.dummy;
 import java.security.MessageDigest;
 import java.util.Random;
 
-// TODO remove this class (somewhat unrelated demo class)
+/**
+ * Tiny proof of work demo.
+ * 
+ * Goal: show link between mining difficulty and number of hashes 
+ * to compute for solving crypto challenge for new blocks.
+ * 
+ * This demo is unrelated to Ethereum or web3j.
+ */
 public class DummyBitcoinMiner {
 
 	public static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();

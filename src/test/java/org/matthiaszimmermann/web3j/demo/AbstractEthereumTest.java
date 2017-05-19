@@ -43,26 +43,6 @@ public class AbstractEthereumTest {
 		BigInteger missingAmount = amountWei.subtract(balance);
 		Web3jUtils.transferFromCoinbaseAndWait(web3j, address, missingAmount);
 	}
-//	
-//	void ensureFundsForTransaction(String address, BigInteger amount, BigInteger txFeeEstimate) throws Exception {
-//		BigInteger balance = getBalanceWei(address);
-//		BigInteger totalAmount = amount.add(txFeeEstimate);
-//		BigInteger missingAmount = totalAmount.subtract(balance);
-//		
-//		if(balance.compareTo(totalAmount) >= 0) {
-//			return;
-//		}
-//		
-//		System.out.println(String.format("insufficient funds. transfer %d to %s from coinbase", missingAmount, address));
-//		
-//		transferFunds(address, missingAmount);
-//	}
-	
-//	String transferFunds(String address, BigInteger amount) throws Exception {
-//		String txHash = transferWei(getCoinbase(), address, amount); 
-//		waitForReceipt(txHash);
-//		return txHash;
-//	}
 
 	TransactionReceipt waitForReceipt(String transactionHash) throws Exception {
 		return Web3jUtils.waitForReceipt(web3j, transactionHash);

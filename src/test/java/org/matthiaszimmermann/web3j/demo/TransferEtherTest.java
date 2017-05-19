@@ -60,7 +60,6 @@ public class TransferEtherTest extends AbstractEthereumTest {
 	 * Ether transfer tests using methods {@link Transaction#createEtherTransaction()}, and {@link Web3j#ethSendTransaction()}.
 	 * Sending account needs to be unlocked for this to work.   
 	 */
-	// TODO fixme (ok with testrpc, nok with geth)
 	@Test
 	public void testCreateAndSendTransaction() throws Exception {
 
