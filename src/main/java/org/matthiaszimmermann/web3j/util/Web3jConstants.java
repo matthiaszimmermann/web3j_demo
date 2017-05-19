@@ -5,7 +5,7 @@ import java.math.BigInteger;
 public class Web3jConstants {
 
 	public static final String CLIENT_IP = "localhost";
-	public static final String CLIENT_PORT = "8546";
+	public static final String CLIENT_PORT = "8545";
 
 	// see https://www.reddit.com/r/ethereum/comments/5g8ia6/attention_miners_we_recommend_raising_gas_limit/
 	public static final BigInteger GAS_PRICE = BigInteger.valueOf(20_000_000_000L);
