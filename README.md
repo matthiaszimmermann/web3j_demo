@@ -199,12 +199,12 @@ When changing the greeter smart contract (file ```src/main/resources/greeter.sol
 
 In the first step ```CompileDemo``` reads in ```greeter.sol``` and compiles it into byte code (file ```greeter.bin```) and contract API (file ```greeter.bin```). In the second step, the web3j wrapper generator is used to create the output (file ```Greeter.java```).
 
-![Create the Java contract wrapper](screenshot_eclipse_ide_compilecontract.png)
+![Create the Java contract wrapper](screenshot/screenshot_eclipse_ide_compilecontract.png)
 
 **IMPORTANT**: To compile Solidity code, ```CompileDemo``` relies on a running Ethereum client with an installed Solidity compiler. You may use either of the provided Docker images for this. The IP of the docker image can either be specified as the 1st command line parameter to ```CompileDemo``` or specified in ```Web3jConstants.CLIENT_IP```.
 
 ## Rund the Contract Demo
 
-![Run the ContractDemo](screenshot_eclipse_ide_contractdemo.png)
+![Run the ContractDemo](screenshot/screenshot_eclipse_ide_contractdemo.png)
 
 **IMPORTANT**: ```ContractDemo``` relies on a running Ethereum client. You may use either of the provided Docker images for this. The IP of the docker image can either be specified as the 1st command line parameter to ```ContractDemo``` or specified in ```Web3jConstants.CLIENT_IP```.
